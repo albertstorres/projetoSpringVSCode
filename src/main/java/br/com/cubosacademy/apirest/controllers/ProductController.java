@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import br.com.cubosacademy.apirest.utils.ResponseHandler;
+
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -31,8 +33,9 @@ public class ProductController {
         return productRepository.findAll();
     }
 
+    //Buscar um produto:
     @GetMapping("/{product_id}") //Precisamos receber o ID de busca como parâmetro de rota;
-    public ResponseEntity<Product> obter (@PathVariable Integer product_id) {
+    public ResponseEntity<Object> obter (@PathVariable Integer product_id) {
     //Indicamos ResponseEntity<> para criar as respostas e usamos @PathVariable para 
     //indicar a variável de parâmetro.
         Optional<Product> product = productRepository.findById(product_id);
@@ -40,14 +43,13 @@ public class ProductController {
         //resultado da busca no banco pelo produto de ID informado.
         if (!product.isPresent()) {
             //Caso não exista registro com o ID informado, montamos a reposta com código 404.
-            return ResponseEntity.notFound().build();
+            return ResponseHandler.generate("Produto não encontrado.", HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<Product>(product.get(), HttpStatus.OK);
+        return new ResponseEntity<Object>(product.get(), HttpStatus.OK);
         //Finalizamos montando a resposta 200.
     }
 
-    //consultar um produto;
     //cadstrar um produto;
     //editar um produto;
     //excluir um produto.
