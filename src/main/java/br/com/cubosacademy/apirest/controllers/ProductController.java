@@ -4,9 +4,13 @@ import br.com.cubosacademy.apirest.models.Product;
 import br.com.cubosacademy.apirest.repositories.ProductRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -17,7 +21,7 @@ public class ProductController {
     @Autowired //Cria uma instancia do tipo ProductRepository sempre que usarmos o productRepository
     private ProductRepository productRepository;
     //exibir uma coleção de produtos;
-    @GetMapping// Decorator que indica o verbo do método;
+    @GetMapping("/listar")// Decorator que indica o verbo do método;
     // Mod. de acesso do método + tipo de retorno + nome do método;
     public List<Product> listar() { 
         //Para retornar uma lista de produtos do banco de dados, precisamos que a 
@@ -27,9 +31,24 @@ public class ProductController {
         return productRepository.findAll();
     }
 
+    @GetMapping("/{product_id}") //Precisamos receber o ID de busca como parâmetro de rota;
+    public ResponseEntity<Product> obter (@PathVariable Integer product_id) {
+    //Indicamos ResponseEntity<> para criar as respostas e usamos @PathVariable para 
+    //indicar a variável de parâmetro.
+        Optional<Product> product = productRepository.findById(product_id);
+        //Criamos uma variável product, opicional e do tipo Product, que vai receber o 
+        //resultado da busca no banco pelo produto de ID informado.
+        if (!product.isPresent()) {
+            //Caso não exista registro com o ID informado, montamos a reposta com código 404.
+            return ResponseEntity.notFound().build();
+        }
+
+        return new ResponseEntity<Product>(product.get(), HttpStatus.OK);
+        //Finalizamos montando a resposta 200.
+    }
+
     //consultar um produto;
     //cadstrar um produto;
     //editar um produto;
     //excluir um produto.
-
 }
