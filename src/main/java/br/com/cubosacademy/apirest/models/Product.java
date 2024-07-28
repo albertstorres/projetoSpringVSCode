@@ -10,7 +10,7 @@ import jakarta.persistence.Column;
 public class Product {
     @Id//Decoramtor que indica que o atributo é um identificador.
     @GeneratedValue(strategy = GenerationType.AUTO) //Decorator que permite criar auto incremento.
-    private int id;
+    private Integer id;
 
     @Column(nullable = false) //Decorator que indica que a coluna nome é obrigatória. Podemos definir ordem crescente ou decrescente e tamanho do nome.
     private String name;
