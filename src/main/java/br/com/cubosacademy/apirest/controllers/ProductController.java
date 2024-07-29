@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -92,5 +93,14 @@ public class ProductController {
         productRepository.save(updateProduct);
         return ResponseEntity.noContent().build();
     }
-    //excluir um produto.
+    //excluir um produto:
+    @DeleteMapping("/{product_id}")
+    public ResponseEntity<Object> delete (@PathVariable Integer product_id) {
+        Optional<Product> product = productRepository.findById(product_id);
+        if (!product.isPresent()) {
+            return ResponseHandler.generate("Produto não encontrado.", HttpStatus.NOT_FOUND);
+        }
+        productRepository.delete(product.get());
+        return ResponseEntity.noContent().build();
+    }
 }
