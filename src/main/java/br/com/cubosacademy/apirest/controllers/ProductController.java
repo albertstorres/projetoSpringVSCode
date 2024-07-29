@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,7 +54,7 @@ public class ProductController {
     }
 
     //cadstrar um produto:
-    @PostMapping
+    @PostMapping()
     public ResponseEntity<Object> create (@RequestBody Product product) {
 
         if (product.getName() == null) {
@@ -66,6 +67,30 @@ public class ProductController {
         return new ResponseEntity<Object>(newProduct, HttpStatus.CREATED);
     }
 
-    //editar um produto;
+    //editar um produto:
+    @PutMapping("/{product_id}")
+    public ResponseEntity<Object> update (
+        @PathVariable Integer product_id,
+        @RequestBody Product product
+    ){
+        Optional<Product> oldProduct = productRepository.findById(product_id);
+        if (!oldProduct.isPresent()) {
+            return ResponseHandler.generate("Produto não encontrado.", HttpStatus.NOT_FOUND);
+        }
+
+        if (product.getName() == null){
+            return ResponseHandler.generate("Nome do produto é obrigatório.", HttpStatus.BAD_REQUEST);
+        } else if (product.getPrice() == null) {
+            return ResponseHandler.generate("Preço do produto é obrigatório.", HttpStatus.BAD_REQUEST);
+        }
+
+        Product updateProduct = oldProduct.get();
+        updateProduct.setName(product.getName());
+        updateProduct.setPrice(product.getPrice());
+        updateProduct.setDescription(product.getDescription());
+
+        productRepository.save(updateProduct);
+        return ResponseEntity.noContent().build();
+    }
     //excluir um produto.
 }
