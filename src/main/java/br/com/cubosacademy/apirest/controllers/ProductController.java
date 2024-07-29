@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import br.com.cubosacademy.apirest.utils.ResponseHandler;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/products")
@@ -56,14 +57,7 @@ public class ProductController {
 
     //cadstrar um produto:
     @PostMapping()
-    public ResponseEntity<Object> create (@RequestBody Product product) {
-
-        if (product.getName() == null) {
-            return ResponseHandler.generate("Nome do produto é obrigatório.", HttpStatus.BAD_REQUEST);
-        } else if (product.getPrice() == null) {
-            return ResponseHandler.generate("Preço do produto é obrigatório.", HttpStatus.BAD_REQUEST);
-        }
-
+    public ResponseEntity<Object> create (@RequestBody @Valid Product product) {
         Product newProduct = productRepository.save(product);
         return new ResponseEntity<Object>(newProduct, HttpStatus.CREATED);
     }
@@ -72,17 +66,11 @@ public class ProductController {
     @PutMapping("/{product_id}")
     public ResponseEntity<Object> update (
         @PathVariable Integer product_id,
-        @RequestBody Product product
+        @RequestBody @Valid Product product
     ){
         Optional<Product> oldProduct = productRepository.findById(product_id);
         if (!oldProduct.isPresent()) {
             return ResponseHandler.generate("Produto não encontrado.", HttpStatus.NOT_FOUND);
-        }
-
-        if (product.getName() == null){
-            return ResponseHandler.generate("Nome do produto é obrigatório.", HttpStatus.BAD_REQUEST);
-        } else if (product.getPrice() == null) {
-            return ResponseHandler.generate("Preço do produto é obrigatório.", HttpStatus.BAD_REQUEST);
         }
 
         Product updateProduct = oldProduct.get();

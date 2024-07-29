@@ -5,6 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,11 +20,13 @@ public class Product {
     @Getter
     @Setter
     @Column(nullable = false) //Decorator que indica que a coluna nome é obrigatória. Podemos definir ordem crescente ou decrescente e tamanho do nome.
+    @NotBlank(message = "O campo nome é obrigatório.")
     private String name;
 
     @Getter
     @Setter
     @Column(nullable = false)
+    @Min(value = 10, message = "O campo preço é obrigatório e no mínimo 10 centavos.")
     private Integer price;
 
     @Getter
