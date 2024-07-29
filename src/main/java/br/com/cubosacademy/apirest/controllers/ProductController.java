@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -50,7 +52,20 @@ public class ProductController {
         //Finalizamos montando a resposta 200.
     }
 
-    //cadstrar um produto;
+    //cadstrar um produto:
+    @PostMapping
+    public ResponseEntity<Object> create (@RequestBody Product product) {
+
+        if (product.getName() == null) {
+            return ResponseHandler.generate("Nome do produto é obrigatório.", HttpStatus.BAD_REQUEST);
+        } else if (product.getPrice() == null) {
+            return ResponseHandler.generate("Preço do produto é obrigatório.", HttpStatus.BAD_REQUEST);
+        }
+
+        Product newProduct = productRepository.save(product);
+        return new ResponseEntity<Object>(newProduct, HttpStatus.CREATED);
+    }
+
     //editar um produto;
     //excluir um produto.
 }
